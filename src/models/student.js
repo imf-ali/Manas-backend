@@ -4,11 +4,16 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const studentSchema = new mongoose.Schema({
-  name:{
+  firstname: {
       type: String,
       required: true,
       trim: true
   },
+  lastname: {
+    type: String,
+    required: true,
+    trim: true
+},
   email:{
       type: String,
       unique: true,
@@ -27,13 +32,90 @@ const studentSchema = new mongoose.Schema({
       minLength: 7,
       trim: true,
   },
+  dob: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  class: {
+    type: Number,
+    required: false,
+    default: undefined,
+  },
+  gender: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  fathername: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  mothername: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  address: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  city: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  state: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  pincode: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  phone: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  guardianPhone: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
+  category: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
   isPaymentDone: {
     type: Boolean,
     required: true,
     default: false,
   },
   avatar: {
-      type: Buffer
+      type: Buffer,
+      required: false,
+      default: undefined,
+  },
+  signature: {
+    type: Buffer,
+    required: false,
+    default: undefined,
+  },
+  parentsign: {
+    type: Buffer,
+    required: false,
+    default: undefined,
+  },
+  meta: {
+    type: Object,
+    required: false,
+    default: undefined,
   },
   tokens: [{
       token:{
@@ -63,6 +145,13 @@ studentSchema.methods.generateAuthToken = async function() {
   user.tokens = user.tokens.concat({ token })
   await user.save()
   return token
+}
+
+studentSchema.statics.updateSchema = async function(id, data) {
+  const user = await Student.findByIdAndUpdate(id, {
+    ...data,
+  });
+  return user
 }
 
 studentSchema.statics.findByCredentials = async (email,password) => {

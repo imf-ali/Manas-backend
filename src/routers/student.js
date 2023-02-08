@@ -3,6 +3,7 @@ const Student = require("../models/student");
 const { studentAuth } = require("../middleware/auth");
 const StatusCodes = require("http-status");
 const shortid = require('shortid');
+const Razorpay = require("razorpay");
 require("dotenv").config();
 
 const Router = new express.Router();
@@ -13,6 +14,27 @@ Router.post("/student", async (req, res) => {
     await user.save();
     const token = await user.generateAuthToken();
     res.status(StatusCodes.CREATED).send({ user, token });
+  } catch (e) {
+    res.status(StatusCodes.BAD_REQUEST).send();
+  }
+});
+
+Router.patch("/student/:studentId/update", async (req, res) => {
+  try {
+    console.log(req.body);
+    console.log(req.params.studentId);
+    const user = await Student.updateSchema(req.params.studentId, req.body);
+    res.status(StatusCodes.CREATED).send({ user });
+  } catch (e) {
+    res.status(StatusCodes.BAD_REQUEST).send();
+  }
+});
+
+Router.get("/student/:studentId/me", async (req, res) => {
+  try {
+    const user = await Student.findById(req.params.studentId);
+    const userRes = user.toJSON();
+    res.status(StatusCodes.OK).send({ userRes });
   } catch (e) {
     res.status(StatusCodes.BAD_REQUEST).send();
   }
@@ -54,7 +76,7 @@ Router.post("/student/logout/all", studentAuth, async (req, res) => {
   }
 });
 
-Router.post("/student/payment", async (req, res) => {
+Router.post("/student/payment", studentAuth, async (req, res) => {
   try {
     const instance = new Razorpay({
       key_id: process.env.YOUR_KEY_ID,
