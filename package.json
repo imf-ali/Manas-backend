@@ -20,6 +20,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.0.0",
     "mongoose": "^6.9.0",
+    "pug": "^3.0.2",
+    "puppeteer": "^19.6.3",
     "razorpay": "^2.8.4",
     "shortid": "^2.2.16",
     "validator": "^13.9.0"

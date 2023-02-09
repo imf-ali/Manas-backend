@@ -12,7 +12,7 @@ app.use(adminRouter);
 app.use(studentRouter);
 app.use(commonRouter);
 
-port = process.env.PORT || 9008;
+port = process.env.PORT || 9007;
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}...`)

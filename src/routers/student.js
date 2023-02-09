@@ -1,10 +1,13 @@
 const express = require("express");
+const pug = require("pug");
 const Student = require("../models/student");
 const { studentAuth } = require("../middleware/auth");
 const StatusCodes = require("http-status");
 const shortid = require('shortid');
 const Razorpay = require("razorpay");
 require("dotenv").config();
+const Render = require('../utils/render');
+const fs = require('fs');
 
 const Router = new express.Router();
 
@@ -30,7 +33,7 @@ Router.patch("/student/:studentId/update", async (req, res) => {
   }
 });
 
-Router.get("/student/:studentId/me", async (req, res) => {
+Router.get("/student/:studentId/me", studentAuth, async (req, res) => {
   try {
     const user = await Student.findById(req.params.studentId);
     const userRes = user.toJSON();
@@ -71,6 +74,20 @@ Router.post("/student/logout/all", studentAuth, async (req, res) => {
     req.user.tokens = [];
     await req.user.save();
     res.send();
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+});
+
+Router.post("/student/renderadmitcard", async (req, res) => {
+  try {
+    const data = await Render.renderFile({
+      template: `src/views/admitCard.pug`,
+      render: {
+        name: 'Fahad Ali'
+      }
+    })
+    res.status(StatusCodes.CREATED).send({ data });
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
   }
