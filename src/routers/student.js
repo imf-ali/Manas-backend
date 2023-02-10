@@ -79,7 +79,7 @@ Router.post("/student/logout/all", studentAuth, async (req, res) => {
   }
 });
 
-Router.post("/student/renderadmitcard", async (req, res) => {
+Router.post("/student/renderadmitcard", studentAuth, async (req, res) => {
   try {
     const data = await Render.renderFile({
       template: `src/views/admitCard.pug`,
