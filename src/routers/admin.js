@@ -3,6 +3,7 @@ const Admin = require("../models/admin");
 const Notice = require("../models/notice");
 const { adminAuth } = require("../middleware/auth");
 const StatusCodes = require("http-status");
+const Blog = require("../models/blog");
 
 const Router = new express.Router();
 
@@ -90,6 +91,35 @@ Router.patch('/admin/showNotice', adminAuth, async (req, res) => {
     notice.show = req.body.show;
     await notice.save();
     res.status(StatusCodes.OK).send({ notice });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
+Router.get('/admin/Blog', adminAuth, async (req, res) => {
+  try {
+    const blog = await Blog.find();
+    res.status(StatusCodes.OK).send({ blog });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
+Router.patch('/admin/Blog', adminAuth, async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.body.id);
+    blog.show = req.body.show;
+    await blog.save();
+    res.status(StatusCodes.OK).send({ blog });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
+Router.delete('/admin/Blog', adminAuth, async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndDelete(req.body.id);
+    res.status(StatusCodes.OK).send({ blog });
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
   }
