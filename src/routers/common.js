@@ -34,4 +34,12 @@ Router.get('/getBlog', async (req, res) => {
   }
 })
 
+Router.get('/app/health', async (req, res) => {
+  try {
+    res.status(StatusCodes.OK).send({ status : 'Server is running' });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
 module.exports = Router;
