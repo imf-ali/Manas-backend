@@ -8,10 +8,15 @@ const noticeSchema = new mongoose.Schema({
   },
   data: {
     type: String,
-    required: true,
+    required: false,
     trim: true
   },
   show: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  mainNotice : {
     type: Boolean,
     required: true,
     default: false

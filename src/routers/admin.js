@@ -61,7 +61,7 @@ Router.post('/admin/addNotice', adminAuth, async (req, res) => {
   try {
     const notice = new Notice(req.body);
     await notice.save();
-    res.status(StatusCodes.CREATED).send({ heading: notice.heading, data: notice.data });
+    res.status(StatusCodes.CREATED).send({ heading: notice.heading, data: notice.data, mainNotice: notice.mainNotice });
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
   }
