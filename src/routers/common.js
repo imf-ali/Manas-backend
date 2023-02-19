@@ -34,6 +34,15 @@ Router.get('/getBlog', async (req, res) => {
   }
 })
 
+Router.get('/getBlog/:blogid', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.blogid);
+    res.status(StatusCodes.OK).send({ blog });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
 Router.get('/app/health', async (req, res) => {
   try {
     res.status(StatusCodes.OK).send({ status : 'Server is running' });
