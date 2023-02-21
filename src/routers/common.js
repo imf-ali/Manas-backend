@@ -7,7 +7,7 @@ const Router = new express.Router();
 
 Router.get('/getNotice', async (req, res) => {
   try {
-    const allNotice = await Notice.find({ show: true });
+    const allNotice = await Notice.find({ show: true, mainNotice: true });
     res.status(StatusCodes.OK).send({ allNotice });
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
