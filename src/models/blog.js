@@ -6,6 +6,16 @@ const blogSchema = new mongoose.Schema({
       required: true,
       trim: true
   },
+  email:{
+      type: String,
+      required: true,
+      trim: true
+  },
+  phone:{
+    type: String,
+    required: true,
+    trim: true
+  },
   heading:{
     type: String,
     required: true,
