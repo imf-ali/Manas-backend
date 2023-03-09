@@ -24,8 +24,6 @@ Router.post("/student", async (req, res) => {
 
 Router.patch("/student/:studentId/update", async (req, res) => {
   try {
-    console.log(req.body);
-    console.log(req.params.studentId);
     const user = await Student.updateSchema(req.params.studentId, req.body);
     res.status(StatusCodes.CREATED).send({ user });
   } catch (e) {
