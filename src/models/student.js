@@ -38,7 +38,7 @@ const studentSchema = new mongoose.Schema({
     default: undefined,
   },
   class: {
-    type: Number,
+    type: String,
     required: false,
     default: undefined,
   },
@@ -92,23 +92,23 @@ const studentSchema = new mongoose.Schema({
     required: false,
     default: undefined,
   },
-  isPaymentDone: {
-    type: Boolean,
+  paymentStatus: {
+    type: Number,
     required: true,
-    default: false,
+    default: 1,
   },
   avatar: {
-      type: Buffer,
+      type: String,
       required: false,
       default: undefined,
   },
   signature: {
-    type: Buffer,
+    type: String,
     required: false,
     default: undefined,
   },
   parentsign: {
-    type: Buffer,
+    type: String,
     required: false,
     default: undefined,
   },
@@ -133,7 +133,6 @@ studentSchema.methods.toJSON = function (){
   const userObject = user.toObject()
   delete userObject.password
   delete userObject.tokens
-  delete userObject.avatar
 
   return userObject
 }
@@ -150,7 +149,7 @@ studentSchema.methods.generateAuthToken = async function() {
 studentSchema.statics.updateSchema = async function(id, data) {
   const user = await Student.findByIdAndUpdate(id, {
     ...data,
-  });
+  }, {new: true});
   return user
 }
 
