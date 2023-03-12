@@ -13,7 +13,11 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
-},
+  },
+  registration: {
+    type: String,
+    required: false,
+  },
   email:{
       type: String,
       unique: true,
@@ -28,7 +32,7 @@ const studentSchema = new mongoose.Schema({
   },
   password:{
       type: String,
-      required: true,
+      required: false,
       minLength: 7,
       trim: true,
   },
@@ -146,6 +150,15 @@ studentSchema.methods.generateAuthToken = async function() {
   return token
 }
 
+studentSchema.methods.getRegistration = async function() {
+  const user = this
+  const year = new Date().getFullYear().toString();
+  const userList = await Student.find({ registration : new RegExp(year.substring(1)) });
+  user.registration = `MTS${year.substring(1)}${(userList.length+1).toString().padStart(4, '0')}`
+  await user.save()
+  return user.registration
+}
+
 studentSchema.statics.updateSchema = async function(id, data) {
   const user = await Student.findByIdAndUpdate(id, {
     ...data,
@@ -159,9 +172,11 @@ studentSchema.statics.findByCredentials = async (email,password) => {
       throw new Error('Unable to login')
   }
 
-  const isMatch = await bcrypt.compare(password,user.password)
-  if(!isMatch){
-      throw new Error('Unable to login')
+  if (password) {
+    const isMatch = await bcrypt.compare(password,user.password)
+    if(!isMatch){
+        throw new Error('Unable to login')
+    }
   }
 
   return user
