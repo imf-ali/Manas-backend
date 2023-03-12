@@ -16,7 +16,7 @@ const render = async (opts) => {
 
   await page.setContent(opts.content);
   const data = await page.pdf({
-    format: 'A4',
+    format: 'A2',
     printBackground: true,
     displayHeaderFooter: false,
   });

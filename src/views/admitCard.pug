@@ -1,8 +1,5 @@
 doctype html
 head
-  meta(charset='utf-8')
-  meta(name='viewport' content='width=device-width, initial-scale=1')
-  meta(name='theme-color' content='#000000')
   style.
     body {
     margin: 0;
@@ -105,10 +102,10 @@ noscript You need to enable JavaScript to run this app.
           h1 Admit Card
       .admitGroup
         h2 Registration No.
-        input.admitInput(type='text')
+        input.admitInput(type='text' value=`${registration}`)
       .admitGroup
         h4 Name: 
-        input.admitInput.name(type='text')
+        input.admitInput.name(type='text' value=`${firstname} ${lastname}`)
       .admitGroup
         .admitGroup
           h4 Test Centre: 
@@ -134,5 +131,5 @@ noscript You need to enable JavaScript to run this app.
     .admitRight
       .admitClass
         h3 Class
-        span XI
+        span #{classdata}
       .admitPhoto

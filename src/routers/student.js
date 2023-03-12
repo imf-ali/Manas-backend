@@ -99,7 +99,10 @@ Router.post("/student/renderadmitcard", studentAuth, async (req, res) => {
     const data = await Render.renderFile({
       template: `src/views/admitCard.pug`,
       render: {
-        name: 'Fahad Ali'
+        registration: req.user.registration,
+        firstname: req.user.firstname,
+        lastname: req.user.lastname,
+        classdata : req.user.class,
       }
     })
     res.status(StatusCodes.CREATED).send({ data });
