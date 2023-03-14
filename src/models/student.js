@@ -13,7 +13,11 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
-},
+  },
+  registration: {
+    type: String,
+    required: false,
+  },
   email:{
       type: String,
       unique: true,
@@ -28,7 +32,7 @@ const studentSchema = new mongoose.Schema({
   },
   password:{
       type: String,
-      required: true,
+      required: false,
       minLength: 7,
       trim: true,
   },
@@ -38,7 +42,7 @@ const studentSchema = new mongoose.Schema({
     default: undefined,
   },
   class: {
-    type: Number,
+    type: String,
     required: false,
     default: undefined,
   },
@@ -92,23 +96,23 @@ const studentSchema = new mongoose.Schema({
     required: false,
     default: undefined,
   },
-  isPaymentDone: {
-    type: Boolean,
+  paymentStatus: {
+    type: Number,
     required: true,
-    default: false,
+    default: 1,
   },
   avatar: {
-      type: Buffer,
+      type: String,
       required: false,
       default: undefined,
   },
   signature: {
-    type: Buffer,
+    type: String,
     required: false,
     default: undefined,
   },
   parentsign: {
-    type: Buffer,
+    type: String,
     required: false,
     default: undefined,
   },
@@ -133,7 +137,6 @@ studentSchema.methods.toJSON = function (){
   const userObject = user.toObject()
   delete userObject.password
   delete userObject.tokens
-  delete userObject.avatar
 
   return userObject
 }
@@ -147,10 +150,19 @@ studentSchema.methods.generateAuthToken = async function() {
   return token
 }
 
+studentSchema.methods.getRegistration = async function() {
+  const user = this
+  const year = new Date().getFullYear().toString();
+  const userList = await Student.find({ registration : new RegExp(year.substring(1)) });
+  user.registration = `MTS${year.substring(1)}${(userList.length+1).toString().padStart(4, '0')}`
+  await user.save()
+  return user.registration
+}
+
 studentSchema.statics.updateSchema = async function(id, data) {
   const user = await Student.findByIdAndUpdate(id, {
     ...data,
-  });
+  }, {new: true});
   return user
 }
 
@@ -160,9 +172,11 @@ studentSchema.statics.findByCredentials = async (email,password) => {
       throw new Error('Unable to login')
   }
 
-  const isMatch = await bcrypt.compare(password,user.password)
-  if(!isMatch){
-      throw new Error('Unable to login')
+  if (password) {
+    const isMatch = await bcrypt.compare(password,user.password)
+    if(!isMatch){
+        throw new Error('Unable to login')
+    }
   }
 
   return user

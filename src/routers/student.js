@@ -7,16 +7,29 @@ const shortid = require('shortid');
 const Razorpay = require("razorpay");
 require("dotenv").config();
 const Render = require('../utils/render');
+const GoogleLogin = require('../utils/googleLogin');
 const fs = require('fs');
 
 const Router = new express.Router();
 
 Router.post("/student", async (req, res) => {
-  const user = new Student(req.body);
   try {
+    var googleRes, user;
+    if (req.body.googleAccessToken) {
+      googleRes = await GoogleLogin.login(req.body.googleAccessToken);
+      user = new Student({
+        email: googleRes.data.email,
+        firstname: googleRes.data.given_name,
+        lastname: googleRes.data.family_name,
+      })
+    }
+    else {
+      user = new Student(req.body);
+    }
     await user.save();
     const token = await user.generateAuthToken();
-    res.status(StatusCodes.CREATED).send({ user, token });
+    const registration = await user.getRegistration();
+    res.status(StatusCodes.CREATED).send({ user, token, registration });
   } catch (e) {
     res.status(StatusCodes.BAD_REQUEST).send();
   }
@@ -24,8 +37,6 @@ Router.post("/student", async (req, res) => {
 
 Router.patch("/student/:studentId/update", async (req, res) => {
   try {
-    console.log(req.body);
-    console.log(req.params.studentId);
     const user = await Student.updateSchema(req.params.studentId, req.body);
     res.status(StatusCodes.CREATED).send({ user });
   } catch (e) {
@@ -45,8 +56,12 @@ Router.get("/student/:studentId/me", studentAuth, async (req, res) => {
 
 Router.post("/student/login", async (req, res) => {
   try {
+    var googleRes;
+    if (req.body.googleAccessToken) {
+      googleRes = await GoogleLogin.login(req.body.googleAccessToken);
+    }
     const user = await Student.findByCredentials(
-      req.body.email,
+      req.body.email || googleRes.data.email,
       req.body.password
     );
     const token = await user.generateAuthToken();
@@ -84,7 +99,10 @@ Router.post("/student/renderadmitcard", studentAuth, async (req, res) => {
     const data = await Render.renderFile({
       template: `src/views/admitCard.pug`,
       render: {
-        name: 'Fahad Ali'
+        registration: req.user.registration,
+        firstname: req.user.firstname,
+        lastname: req.user.lastname,
+        classdata : req.user.class,
       }
     })
     res.status(StatusCodes.CREATED).send({ data });
@@ -115,7 +133,6 @@ Router.post("/student/payment", studentAuth, async (req, res) => {
       amount : response.amount
     })
   } catch (error) {
-    console.log(error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
   }
 });

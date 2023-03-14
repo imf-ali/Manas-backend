@@ -4,6 +4,7 @@ const Notice = require("../models/notice");
 const { adminAuth } = require("../middleware/auth");
 const StatusCodes = require("http-status");
 const Blog = require("../models/blog");
+const Student = require("../models/student");
 
 const Router = new express.Router();
 
@@ -29,7 +30,6 @@ Router.post("/admin/login", async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(StatusCodes.CREATED).send({ user, token });
   } catch (e) {
-    console.log(e);
     res.status(StatusCodes.BAD_REQUEST).send();
   }
 });
@@ -120,6 +120,24 @@ Router.delete('/admin/Blog', adminAuth, async (req, res) => {
   try {
     const blog = await Blog.findByIdAndDelete(req.body.id);
     res.status(StatusCodes.OK).send({ blog });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
+Router.get('/admin/getAllStudents', adminAuth, async (req, res) => {
+  try {
+    const studentList = await Student.find();
+    res.status(StatusCodes.OK).send({ studentList });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+})
+
+Router.patch('/admin/:studentId/markpaid', adminAuth, async (req, res) => {
+  try {
+    const student = await Student.updateSchema(req.params.studentId, req.body);
+    res.status(StatusCodes.OK).send({ student });
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
   }
