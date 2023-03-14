@@ -1,7 +1,10 @@
-const mongoose = require('mongoose')
-require('dotenv').config()
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect(
+  "mongodb+srv://codeforall:codeforall@cluster0.thl3ihl.mongodb.net/test",
+  {
     useNewUrlParser: true,
     // useCreateIndex: true
-})
+  }
+);
