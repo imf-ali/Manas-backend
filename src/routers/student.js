@@ -8,7 +8,6 @@ const Razorpay = require("razorpay");
 require("dotenv").config();
 const Render = require('../utils/render');
 const GoogleLogin = require('../utils/googleLogin');
-const fs = require('fs');
 
 const Router = new express.Router();
 

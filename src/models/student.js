@@ -91,6 +91,11 @@ const studentSchema = new mongoose.Schema({
     required: false,
     default: undefined,
   },
+  whatsappPhone: {
+    type: String,
+    required: false,
+    default: undefined,
+  },
   category: {
     type: String,
     required: false,
