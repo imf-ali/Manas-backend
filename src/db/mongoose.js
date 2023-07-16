@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 mongoose.connect(
-  "mongodb+srv://codeforall:codeforall@cluster0.thl3ihl.mongodb.net/test",
+  process.env.MONGO_URL,
   {
     useNewUrlParser: true,
     // useCreateIndex: true
